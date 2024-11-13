@@ -1,0 +1,28 @@
+[tool.poetry]
+name = "gunther"
+version = "2.0.0"
+description = "A translator bot for Telegram"
+authors = ["microcrocodile <gunther@microcrocodile.space>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "3.11.1"
+python-telegram-bot = {extras = ["job-queue"], version = "21.6"}
+python-i18n = {extras = ["yaml"], version = "0.3.9"}
+sqlalchemy = "2.0.36"
+psycopg2 = "2.9.10"
+redis = "5.2.0"
+google-cloud-translate = "3.17.0"
+
+[tool.ruff]
+line-length = 119
+
+[tool.ruff.lint]
+ignore = ["E721"]
+
+[tool.ruff.format]
+quote-style = "single"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

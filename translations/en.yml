@@ -1,0 +1,43 @@
+en:
+  rate-limit: Your access has been restricted. Please, keep calm for a while!
+  wrong_start: You are no guest anymore!
+  no_lang: There is no language %{lang}.
+  choose_lang: 'Please, specify the language. To show the menu type /config'
+  native_lang: Please, specify your native language.
+  trans_lang: Please, specify which language you need to translate.
+  finish_lang: Thank you! Günther can translate something for you now.
+  invalid_input: Your input is not valid.
+  trans_no_response: Sorry, translation service is not available now.
+  code_1: Sorry, something went wrong. Try again later.
+  code_2: This input is too long, it shouldn't exceed %{text_len} symbols.
+  code_3: Too many words, it shouldn't exceed %{words_count} words.
+  code_4: Some of your words is too long. The limit for a word is %{word_len} symbols.
+  code_5: This input is not correct.
+  code_6: Your daily translation quota has been exceeded. There are only %{api_quota} requests allowed.
+  code_7: Sorry, something went wrong. Try again later.
+  code_8: Sorry, the inserted language mustn't be the same as the expected translation language.
+  code_0: Sorry, something went wrong. Try again later.
+  trans_again: "_%{text} (%{lang}.)_ — %{trans}\nPrevious tries: *%{tries}*"
+  trans_first: "_%{text} (%{lang}.)_ — %{trans}"
+  wrong_quiz: You can't enable or disable the quiz mode right now.
+  offset: Please, specify your timezon offset (from UTC). Must be in \[-12;+14], e.g., +1, -4, 0, etc.
+  quiz_disabled: The quiz mode has been disabled.
+  wrong_config: It's impossible now.
+  wrong_tz: Please, specify your timezon offset (from UTC). Must be in \[-12;+14], e.g., +1, -4, 0, etc.
+  qnum: Please, specify how many questions you want to answer a quiz. Minimum number is %{min_qn}, maximum — %{max_qn}.
+  wrong_qn: Sorry, it must be a number.
+  sww: Sorry, something went wrong. Try again later.
+  wrong_qn_value: Value must be > %{min} and < than %{max}.
+  qn_ok: Ok, the quiz mode has been activated.
+  are_u_ready: Are you ready for the quiz?
+  yes_no: Yes No
+  next_time: Ok, I'll ask you later.
+  quiz_q: How to translate «%{text}»? [%{number} of %{total}]
+  empty_quiz: Looks like there are no questions for you.
+  finish_quiz: The quiz is over! Correct answers %{corrects}, mistakes %{mistakes}.
+  wrong_go: It's impossible now.
+  wrong_switch: Sorry, something went wrong. Try again later.
+  switched: The quiz algo has been successfully swithced.
+  top10: "_%{text} (%{text_lang}.)_ — %{trans} (%{trans_lang}.)\nWeight: %{weight}\nHold: %{hold}\nLast appear: %{last_appear}"
+  empty_top10: Looks like we are lack of options!
+  wrong_cmd: Sorry, wrong command.

@@ -1,0 +1,55 @@
+version: '2'
+
+services:
+  db:
+    container_name: postgres_db
+    image: postgres:latest
+    environment:
+      - POSTGRES_DB=gunther
+      - POSTGRES_USER=botpgusr
+      - POSTGRES_PASSWORD=YOUR_POSTGRES_PASSWORD_HERE
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - ntwrk
+
+  cache:
+    container_name: redis_cache
+    image: redis:latest
+    restart: unless-stopped
+    command: "redis-server --save 20 1 --loglevel warning --requirepass YOUR_REDIS_PASSWORD_HERE"
+    networks:
+      - ntwrk
+
+  app:
+    container_name: gunther
+    build: .
+    environment:
+      - TOKEN=YOUR_TELEGRAM_BOT_API_TOKEN_HERE
+      - GOOGLE_APPLICATION_CREDENTIALS=/opt/gunther/gac.json
+      - DB_HOST=postgres_db
+      - DB_USER=botpgusr
+      - DB_PASS=YOUR_POSTGRES_PASSWORD_HERE
+      - DB_NAME=gunther
+      - DB_PORT=5432
+      - REDIS_HOST=redis_cache
+      - REDIS_PORT=6379
+      - REDIS_PASS=YOUR_REDIS_PASSWORD_HERE
+      - TRANS_PATH=translations/
+      - TG_API=
+    volumes:
+      - ./gac.json:/opt/gunther/gac.json
+    depends_on:
+      - db
+      - cache
+    networks:
+      - ntwrk
+
+networks:
+  ntwrk:
+    driver: bridge
+
+volumes:
+  pgdata:
+
