@@ -40,3 +40,6 @@ ru:
   top10: "_%{text} (%{text_lang}.)_ — %{trans} (%{trans_lang}.)\nВес: %{weight}\nОсталось: %{hold}\nПоследнее появление: %{last_appear}"
   empty_top10: Похоже, у нас нет ничего для Вас.
   wrong_cmd: Извините, это неправильная команда.
+  revoke_req: Вы хотите отозвать последний ввод?
+  no_revoke: Пока отзывать нечего.
+  revoke_done: Ввод отозван.

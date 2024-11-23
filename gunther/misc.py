@@ -41,6 +41,23 @@ def write_to_db(session: Session, data: object) -> None:
         raise Exception(f'write_to_db: fail to write data into db - "{err}", rolling back.')
 
 
+def delete_from_db(session: Session, data: object) -> None:
+    if not session or type(session) is not Session or not data:
+        return
+
+    if type(data) is list or type(data) is tuple:
+        for elem in data:
+            session.delete(elem)
+    else:
+        session.delete(data)
+
+    try:
+        session.commit()
+    except IntegrityError as err:
+        session.rollback()
+        raise Exception(f'delete_from_db: fail to delete data from db - "{err}", rolling back.')
+
+
 def rate_limit(data: dict, delta_limit: int, start: int, tries_limit: int, max: int) -> None:
     """
     `data` - object to store temporary user's data.

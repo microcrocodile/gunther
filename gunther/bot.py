@@ -27,7 +27,16 @@ from telegram.ext import (
 from telegram.constants import ParseMode
 
 from gunther import DB_CONNECT_TIMEOUT_SECS, TIMEZONE_PATTERN
-from gunther.misc import init_i18n, write_to_db, rate_limit, langs_keyboard, yes_no_keyboard, shift_time, return_time
+from gunther.misc import (
+    init_i18n,
+    write_to_db,
+    delete_from_db,
+    rate_limit,
+    langs_keyboard,
+    yes_no_keyboard,
+    shift_time,
+    return_time,
+)
 from gunther.models import System, User, Langs
 from gunther.translator import Translator
 from gunther.quiz_machine import QuizMachine, Question
@@ -86,11 +95,13 @@ class GuntherBot:
         self._app.add_handler(CommandHandler('go', self.command_go))
         self._app.add_handler(CommandHandler('switch', self.command_switch))
         self._app.add_handler(CommandHandler('top10', self.command_top10))
+        self._app.add_handler(CommandHandler('revoke', self.command_revoke))
         self._app.add_handler(MessageHandler(filters.TEXT & (~filters.COMMAND), self.text_message_handler))
         self._app.add_handler(MessageHandler(filters.COMMAND, self.unknown_command_handler))
         self._app.add_handler(CallbackQueryHandler(self.confirm_native_lang, pattern=r'^native_lang_[a-z]+$'))
         self._app.add_handler(CallbackQueryHandler(self.confirm_trans_lang, pattern=r'^trans_lang_[a-z]+$'))
         self._app.add_handler(CallbackQueryHandler(self.confirm_quiz_start, pattern=r'^quiz_(?:yes|no)$'))
+        self._app.add_handler(CallbackQueryHandler(self.confirm_revoke, pattern=r'^revoke_(?:yes|no)$'))
         self._app.add_handler(PollHandler(self.confirm_quiz_question))
         self._app.add_handler(TypeHandler(Update, self.pre_handler), -1)
 
@@ -410,6 +421,26 @@ class GuntherBot:
 
         await update.effective_message.reply_markdown(msg)
 
+    async def command_revoke(self, update: Update, _) -> None:
+        if not update.effective_user or not update.effective_message:
+            return
+
+        uid = update.effective_user.id
+        user = self._users.get(uid)
+
+        if not user:
+            return
+
+        if not self._traslator.last_insert:
+            msg = i18n.t('no_revoke', locale=user.native_lang)
+            await update.effective_message.reply_text(msg)
+            return
+
+        msg = i18n.t('revoke_req', locale=user.native_lang)
+        options = i18n.t('yes_no', locale=user.native_lang).split()
+
+        await update.effective_message.reply_markdown(text=msg, reply_markup=yes_no_keyboard('revoke', options))
+
     # KEYBOARDS
 
     def kb_native_lang(self) -> InlineKeyboardMarkup:
@@ -592,6 +623,32 @@ class GuntherBot:
                     await context.bot.stop_poll(uid, msg_id)
                 else:
                     logger.error(f'Cannot stop poll for user #{uid}.')
+
+    async def confirm_revoke(self, update: Update, _) -> None:
+        query = update.callback_query
+
+        if not query or not query.message or not query.data:
+            return
+
+        await query.answer()
+
+        uid = query.message.chat.id
+        user = self._users.get(uid)
+
+        if not user or user.state != self.NEXT or not self._quizers.get(uid) or not self._quizers[uid].is_enabled:
+            await query.delete_message()
+            return
+
+        answer = query.data.replace('revoke_', '')
+
+        if answer == 'yes':
+            msg = i18n.t('revoke_done', locale=user.native_lang)
+            delete_from_db(self._dbs, self._traslator.last_insert)
+            self._traslator.last_insert = None
+            await query.edit_message_text(msg)
+            return
+
+        await query.delete_message()
 
     # MISC
 

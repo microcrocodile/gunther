@@ -5,7 +5,7 @@ import re
 import redis
 
 from dataclasses import dataclass
-from typing import Literal
+from typing import Literal, Optional
 
 from sqlalchemy.orm import Session
 from sqlalchemy.future import select
@@ -34,11 +34,20 @@ class Translation:
 
 
 class Translator:
-    __slots__ = ('_dbs', '_cache_url')
+    __slots__ = ('_dbs', '_cache_url', '_last_insert')
+
+    @property
+    def last_insert(self) -> Optional[Content]:
+        return self._last_insert
+
+    @last_insert.setter
+    def last_insert(self, value: Optional[Content]) -> None:
+        self._last_insert = value
 
     def __init__(self, db_session: Session, cache_url: str) -> None:
         self._cache_url = cache_url
         self._dbs = db_session
+        self._last_insert = None
 
     def _validate(self, text: str, locale: str) -> str:
         sys = self._dbs.execute(select(System).where(System.id == 0)).scalar_one()
@@ -189,6 +198,8 @@ class Translator:
                     trans_lang=user.native_lang,
                 )
                 write_to_db(self._dbs, content)
+
+                self._last_insert = content
 
                 return Translation(
                     status='ok',

@@ -41,3 +41,6 @@ en:
   top10: "_%{text} (%{text_lang}.)_ — %{trans} (%{trans_lang}.)\nWeight: %{weight}\nHold: %{hold}\nLast appear: %{last_appear}"
   empty_top10: Looks like we are lack of options!
   wrong_cmd: Sorry, wrong command.
+  revoke_req: Do you want to revoke the last insertion?
+  no_revoke: Nothing to revoke now.
+  revoke_done: The insertion was revoked.
